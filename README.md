@@ -1,149 +1,106 @@
-# 🦺 Sistema de Detección de Cascos de Seguridad
+# ��� Frontend - Sistema de Detección de Cascos
 
-Sistema de detección en tiempo real de cascos de seguridad usando YOLOv8 y Angular. Permite detectar si las personas llevan casco de protección mediante imágenes, cámara web o archivos.
+Frontend Angular para sistema de detección de cascos de seguridad usando YOLOv8.
 
-## 🚀 Características
+## ��� Deploy en Vercel
 
-- **Detección por imagen**: Sube una imagen y obtén el análisis de seguridad
-- **Detección en tiempo real**: Usa tu cámara web para monitoreo continuo
-- **API REST**: Backend FastAPI con endpoints para diferentes tipos de detección
-- **Alertas WhatsApp**: Notificaciones automáticas ante situaciones de riesgo
-- **Interfaz moderna**: Frontend Angular con diseño responsivo
+Aplicación desplegada en: **https://deteccion-cascos.vercel.app**
 
-## 🛠️ Tecnologías
+### Configuración
 
-### Backend
-- Python 3.11
-- FastAPI
-- YOLOv8 (Ultralytics)
-- OpenCV
-- NumPy
+El frontend se conecta automáticamente con el backend. Para cambiar la URL del backend:
 
-### Frontend
-- Angular 20
-- TypeScript
-- RxJS
+1. Edita `src/environments/environment.ts`
+2. Actualiza `apiUrl` con la URL de Railway
+3. Commit y push (Vercel redespliega automáticamente)
 
-## 📋 Requisitos
+## ���️ Desarrollo Local
 
-- Python 3.11+
+### Requisitos
+
 - Node.js 18+
-- npm o yarn
-- Cámara web (para detección en tiempo real)
+- npm
 
-## 🔧 Instalación
-
-### 1. Clonar el repositorio
+### Instalación
 
 ```bash
-git clone <url-del-repositorio>
+# Clonar repositorio
+git clone https://github.com/Crypt0xDev/deteccion-cascos.git
 cd deteccion-cascos
-```
 
-### 2. Configurar Backend (API)
-
-```bash
-cd iape
-pip install -r requirements.txt
-```
-
-### 3. Configurar Frontend
-
-```bash
-cd deteccion-cascos
+# Instalar dependencias
 npm install
-```
 
-## ▶️ Ejecución
-
-### Iniciar Backend
-
-```bash
-cd iape
-uvicorn src.app:app --reload --host 0.0.0.0 --port 8000
-```
-
-La API estará disponible en: `http://localhost:8000`
-
-### Iniciar Frontend
-
-```bash
-cd deteccion-cascos
+# Ejecutar en desarrollo
 npm start
 ```
 
-La aplicación estará disponible en: `http://localhost:4200`
+La aplicación estará disponible en: http://localhost:4200
 
-## 📡 API Endpoints
+### Build de producción
 
-- `GET /` - Estado de la API
-- `POST /detect/` - Detección con imagen (devuelve JSON)
-- `POST /detect/image` - Detección con imagen (devuelve imagen anotada)
-- `GET /detect/from-file` - Detección desde archivo local
-- `GET /camera/snapshot` - Captura y detecta desde cámara
-- `POST /alert/whatsapp` - Enviar alerta por WhatsApp
-
-## ⚙️ Configuración
-
-### Variables de entorno (Backend)
-
-Crea un archivo `.env` en la carpeta `iape`:
-
-```env
-MODEL_PATH=best.pt
-CONFIDENCE_THRESHOLD=0.1
-ALLOWED_ORIGINS=http://localhost:4200,http://127.0.0.1:4200
-WHATSAPP_API_KEY=tu_api_key
-WHATSAPP_PHONE=tu_telefono
+```bash
+npm run build
 ```
 
-### Configuración Frontend
+## ��� Estructura del Proyecto
 
-Edita `deteccion-cascos/src/environments/environment.ts`:
+```
+deteccion-cascos/
+├── src/
+│   ├── app/               # Componentes Angular
+│   ├── environments/      # Configuración de entornos
+│   └── index.html
+├── public/                # Archivos estáticos
+├── angular.json           # Configuración Angular
+├── package.json
+└── README.md
+```
+
+## ��� Tecnologías
+
+- Angular 20
+- TypeScript 5.6
+- RxJS 7.8
+- Zone.js 0.15
+
+## ��� Características
+
+- **Detección por imagen**: Sube una imagen y obtén análisis de seguridad
+- **Detección en tiempo real**: Usa cámara web para monitoreo continuo
+- **Interfaz responsiva**: Diseño moderno y adaptable
+- **Notificaciones**: Integración con WhatsApp vía backend
+
+## ��� Enlaces
+
+- **Backend**: https://github.com/Crypt0xDev/deteccion-cascos-backend
+- **Despliegue**: https://deteccion-cascos.vercel.app
+
+## ��� Configuración de Entornos
+
+### Production (`src/environments/environment.ts`)
+
+```typescript
+export const environment = {
+  production: true,
+  apiUrl: 'TU-URL-DE-RAILWAY'  // Actualizar con URL de Railway
+};
+```
+
+### Development (`src/environments/environment.development.ts`)
 
 ```typescript
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:8000'
+  apiUrl: 'http://localhost:8000'  // Backend local
 };
 ```
 
-## 📊 Modelo YOLOv8
+## ��� Scripts Disponibles
 
-El modelo `best.pt` está entrenado para detectar:
-- **helmet**: Cascos de seguridad
-- **head**: Cabezas sin protección
-
-## 🎯 Uso
-
-1. Selecciona el modo de detección:
-   - **Subir imagen**: Carga una imagen desde tu dispositivo
-   - **Tiempo real**: Activa tu cámara para monitoreo continuo
-
-2. El sistema analizará y mostrará:
-   - Número de cascos detectados
-   - Número de personas sin casco
-   - Estado de seguridad (Seguro/Riesgo)
-   - Imagen anotada con las detecciones
-
-## 👥 Grupo 5 - UNSM
-
-Proyecto desarrollado para el curso de la Universidad Nacional de San Martín.
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-caracteristica`)
-3. Commit tus cambios (`git commit -m 'Agregar nueva característica'`)
-4. Push a la rama (`git push origin feature/nueva-caracteristica`)
-5. Abre un Pull Request
-
-## 📞 Soporte
-
-Para reportar problemas o sugerencias, abre un issue en el repositorio.
+```bash
+npm start          # Servidor de desarrollo
+npm run build      # Build de producción
+npm test           # Ejecutar tests
+npm run watch      # Build en modo watch
+```
