@@ -105,20 +105,22 @@ export class App implements OnDestroy {
       const json = (await resJson.json()) as DetectionStatus;
       this.status.set(json);
 
-      // Validación de consistencia de datos
-      let finalMessage = json.status_message;
-      let isSafe = json.safe;
+      // Mejorar el mensaje cuando se detectan personas
+      const totalPersonas = json.helmet_count + json.head_count;
+      let mensajeFinal = json.status_message;
 
-      // Si se detectan cascos pero no personas, hay un problema en el modelo
-      if (json.helmet_count > 0 && json.head_count === 0 && json.safe) {
-        finalMessage = `⚠️ ADVERTENCIA: Se detectaron ${json.helmet_count} casco(s) pero ninguna persona. El modelo puede estar detectando incorrectamente. Revisa la imagen anotada.`;
-        isSafe = false; // Marcar como no seguro por precaución
+      if (totalPersonas > 0) {
+        if (json.safe) {
+          mensajeFinal = `✅ SEGURO: Todas las personas llevan casco.`;
+        } else {
+          mensajeFinal = `⚠️ RIESGO: Se detectaron personas sin casco.`;
+        }
       }
 
-      this.resultado.set(finalMessage);
+      this.resultado.set(mensajeFinal);
 
-      // Actualizar estadísticas con el estado corregido
-      this.updateStatistics(isSafe);
+      // Actualizar estadísticas
+      this.updateStatistics(json.safe);
 
       // Reproducir sonido de alerta
       if (json.safe === false) {
@@ -306,21 +308,23 @@ export class App implements OnDestroy {
       const json = (await res.json()) as DetectionStatus;
       this.status.set(json);
 
-      // Validación de consistencia de datos
-      let finalMessage = json.status_message;
-      let isSafe = json.safe;
+      // Mejorar el mensaje cuando se detectan personas
+      const totalPersonas = json.helmet_count + json.head_count;
+      let mensajeFinal = json.status_message;
 
-      // Si se detectan cascos pero no personas, hay un problema en el modelo
-      if (json.helmet_count > 0 && json.head_count === 0 && json.safe) {
-        finalMessage = `⚠️ ADVERTENCIA: Se detectaron ${json.helmet_count} casco(s) pero ninguna persona. Posible falso positivo del modelo.`;
-        isSafe = false; // Marcar como no seguro por precaución
+      if (totalPersonas > 0) {
+        if (json.safe) {
+          mensajeFinal = `✅ SEGURO: Todas las personas llevan casco.`;
+        } else {
+          mensajeFinal = `⚠️ RIESGO: Se detectaron personas sin casco.`;
+        }
       }
 
-      this.resultado.set(finalMessage);
+      this.resultado.set(mensajeFinal);
       this.annotatedImageUrl.set(null);
 
-      // Actualizar estadísticas con el estado corregido
-      this.updateStatistics(isSafe);
+      // Actualizar estadísticas
+      this.updateStatistics(json.safe);
 
       // Alerta automática en tiempo real
       if (json.safe === false) {
