@@ -59,41 +59,6 @@
     }
 
     @if (mode() !== 'selection') {
-      <!-- Panel de Estadísticas en Tiempo Real -->
-      @if (statistics().totalDetections > 0) {
-        <div class="mb-6 sm:mb-8 bg-gradient-to-br from-indigo-900/40 to-purple-900/40 backdrop-blur-sm p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-indigo-500/30 shadow-xl animate-slide-in">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg sm:text-xl font-bold text-white flex items-center">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-              </svg>
-              Estadísticas de la Sesión
-            </h3>
-            <button (click)="resetStatistics()" class="text-xs sm:text-sm px-3 py-1.5 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg text-slate-300 hover:text-white transition-colors">
-              Reiniciar
-            </button>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            <div class="bg-slate-800/50 p-3 sm:p-4 rounded-lg text-center">
-              <p class="text-xs sm:text-sm text-slate-400 mb-1">Total Análisis</p>
-              <p class="text-2xl sm:text-3xl font-black text-white">{{ statistics().totalDetections }}</p>
-            </div>
-            <div class="bg-emerald-900/30 p-3 sm:p-4 rounded-lg text-center border border-emerald-500/30">
-              <p class="text-xs sm:text-sm text-emerald-400 mb-1">✅ Seguros</p>
-              <p class="text-2xl sm:text-3xl font-black text-emerald-300">{{ statistics().safeDetections }}</p>
-            </div>
-            <div class="bg-red-900/30 p-3 sm:p-4 rounded-lg text-center border border-red-500/30">
-              <p class="text-xs sm:text-sm text-red-400 mb-1">⚠️ Peligro</p>
-              <p class="text-2xl sm:text-3xl font-black text-red-300">{{ statistics().unsafeDetections }}</p>
-            </div>
-            <div class="bg-slate-800/50 p-3 sm:p-4 rounded-lg text-center">
-              <p class="text-xs sm:text-sm text-slate-400 mb-1">Última Detección</p>
-              <p class="text-base sm:text-lg font-bold text-cyan-300">{{ statistics().lastDetectionTime || '--:--' }}</p>
-            </div>
-          </div>
-        </div>
-      }
-
       <section class="bg-gradient-to-br from-slate-800/90 via-slate-800/70 to-slate-900/90 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 md:p-10 border border-slate-700/50 animate-slide-in">
         <button (click)="selectMode('selection')" class="group flex items-center text-blue-400 hover:text-blue-300 mb-6 sm:mb-8 transition-all duration-300 hover:translate-x-1 text-sm sm:text-base">
           <svg class="h-4 w-4 sm:h-5 sm:w-5 mr-2 group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -284,6 +249,20 @@
                   </p>
 
                   @if (status()) {
+                    <!-- Alerta de inconsistencia en datos -->
+                    @if (status()!.helmet_count > 0 && status()!.head_count === 0) {
+                      <div class="mb-4 p-3 bg-yellow-900/30 border border-yellow-500/40 rounded-lg">
+                        <div class="flex items-start space-x-2">
+                          <svg class="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                          </svg>
+                          <div class="text-xs sm:text-sm text-yellow-200">
+                            <strong>Nota técnica:</strong> El modelo detectó cascos sin identificar personas en la imagen. Esto sugiere un falso positivo o error en el entrenamiento del modelo YOLOv8.
+                          </div>
+                        </div>
+                      </div>
+                    }
+                    
                     <div class="grid grid-cols-2 gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-slate-600/50">
                       <div class="bg-slate-900/50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
                         <div class="flex items-center space-x-1.5 sm:space-x-2 mb-1.5 sm:mb-2">
