@@ -118,7 +118,7 @@ export class App implements OnDestroy {
 
       const formData2 = new FormData();
       formData2.append('file', currentImagen);
-      const resImage = await fetch('http://localhost:8000/detect/image', { method: 'POST', body: formData2 });
+      const resImage = await fetch(`${environment.apiUrl}/detect/image`, { method: 'POST', body: formData2 });
 
       if (resImage.ok) {
         const blob = await resImage.blob();
