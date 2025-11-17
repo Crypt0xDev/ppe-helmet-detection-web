@@ -1,4 +1,4 @@
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, signal } from '@angular/core';
 import { environment } from '../environments/environment';
 
@@ -9,16 +9,30 @@ interface DetectionStatus {
   head_count: number;
 }
 
+interface Statistics {
+  totalDetections: number;
+  safeDetections: number;
+  unsafeDetections: number;
+  lastDetectionTime: string;
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [NgIf, NgClass],
+  imports: [NgClass],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnDestroy {
   mode = signal<'selection' | 'upload' | 'realtime'>('selection');
+  isLoading = signal(false);
+  statistics = signal<Statistics>({
+    totalDetections: 0,
+    safeDetections: 0,
+    unsafeDetections: 0,
+    lastDetectionTime: ''
+  });
 
   preview = signal<string | ArrayBuffer | null>(null);
   resultado = signal<string | null>(null);
@@ -71,7 +85,8 @@ export class App implements OnDestroy {
       return;
     }
 
-    this.resultado.set('⏳ Procesando...');
+    this.isLoading.set(true);
+    this.resultado.set('⏳ Analizando imagen con IA...');
     this.status.set(null);
     this.annotatedImageUrl.set(null);
 
@@ -82,17 +97,23 @@ export class App implements OnDestroy {
       const resJson = await fetch(this.detectUrl, { method: 'POST', body: formData });
       if (!resJson.ok) {
         const error = await resJson.text();
-        this.resultado.set(`❌ Error en la API: ${error}`);
+        this.resultado.set(`❌ Error al conectar con el servidor de IA`);
+        this.isLoading.set(false);
         return;
       }
 
       const json = (await resJson.json()) as DetectionStatus;
       this.status.set(json);
       this.resultado.set(json.status_message);
-      // Enviar alerta si hay riesgo
-if (json.safe === false) {
-  await this.sendWhatsAppAlert("⚠️ ALERTA: Persona sin casco detectada.");
-}
+
+      // Actualizar estadísticas
+      this.updateStatistics(json.safe);
+
+      // Reproducir sonido de alerta
+      if (json.safe === false) {
+        this.playAlertSound();
+        await this.sendWhatsAppAlert("⚠️ ALERTA: Persona sin casco detectada.");
+      }
 
 
       const formData2 = new FormData();
@@ -107,8 +128,55 @@ if (json.safe === false) {
       }
     } catch (e) {
       console.error('Error al enviar imagen:', e);
-      this.resultado.set('❌ Error de conexión con la API.');
+      this.resultado.set('❌ Error de conexión. Verifica que el servidor esté activo.');
+    } finally {
+      this.isLoading.set(false);
     }
+  }
+
+  private updateStatistics(isSafe: boolean) {
+    const current = this.statistics();
+    this.statistics.set({
+      totalDetections: current.totalDetections + 1,
+      safeDetections: isSafe ? current.safeDetections + 1 : current.safeDetections,
+      unsafeDetections: !isSafe ? current.unsafeDetections + 1 : current.unsafeDetections,
+      lastDetectionTime: new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    });
+  }
+
+  private playAlertSound() {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+
+      oscillator.frequency.value = 800;
+      oscillator.type = 'sine';
+      gainNode.gain.value = 0.3;
+
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + 0.2);
+
+      setTimeout(() => {
+        oscillator.frequency.value = 600;
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.2);
+      }, 250);
+    } catch (e) {
+      console.warn('No se pudo reproducir sonido de alerta', e);
+    }
+  }
+
+  resetStatistics() {
+    this.statistics.set({
+      totalDetections: 0,
+      safeDetections: 0,
+      unsafeDetections: 0,
+      lastDetectionTime: ''
+    });
   }
 
   async startCamera() {
@@ -119,13 +187,13 @@ if (json.safe === false) {
       video.srcObject = this.stream;
       await video.play();
       this.isCameraOn.set(true);
-      this.resultado.set('Cámara encendida. ¡Lista para detección!');
+      this.resultado.set('📹 Cámara activada. Sistema listo para detección.');
       this.status.set(null);
       this.annotatedImageUrl.set(null);
     } catch (e) {
       console.error('No se pudo iniciar la cámara', e);
       this.isCameraOn.set(false);
-      this.resultado.set('❌ Permiso de cámara denegado o no disponible.');
+      this.resultado.set('❌ Permiso de cámara denegado. Permite el acceso para continuar.');
     }
   }
 /*HDFKJSKFJHSDKJFHSKDFH */
@@ -228,10 +296,15 @@ if (json.safe === false) {
       this.status.set(json);
       this.resultado.set(json.status_message);
       this.annotatedImageUrl.set(null);
+
+      // Actualizar estadísticas
+      this.updateStatistics(json.safe);
+
       // Alerta automática en tiempo real
-if (json.safe === false) {
-  await this.sendWhatsAppAlert("⚠️ ALERTA EN TIEMPO REAL: Persona sin casco detectada.");
-}
+      if (json.safe === false) {
+        this.playAlertSound();
+        await this.sendWhatsAppAlert("⚠️ ALERTA EN TIEMPO REAL: Persona sin casco detectada.");
+      }
 
     } catch (error) {
       console.error('Error en la detección de frame', error);

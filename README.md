@@ -1,56 +1,82 @@
-# DeteccionEep
+# 🛡️ Sistema de Detección de EPP con IA
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.10.
+<div align="center">
 
-## Development server
+![Angular](https://img.shields.io/badge/Angular-20.3-DD0031?style=flat-square&logo=angular)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript)
+![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=flat-square&logo=python)
 
-To start a local development server, run:
+**Detección automática de equipos de protección personal mediante Computer Vision**
 
-```bash
-ng serve
-```
+</div>
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## 📋 Descripción
 
-## Code scaffolding
+Sistema web que detecta el uso de **cascos de seguridad** en tiempo real mediante inteligencia artificial. Diseñado para entornos industriales y de construcción.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+**Características principales:**
+- Análisis de imágenes estáticas y video en tiempo real
+- Alertas automáticas vía WhatsApp
+- Panel de estadísticas en vivo
+- Interfaz responsive y moderna
 
-```bash
-ng generate component component-name
-```
+## 🛠️ Stack Tecnológico
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+**Frontend:** Angular 20, TypeScript, TailwindCSS  
+**Backend:** FastAPI, Python  
+**IA:** YOLO v8, OpenCV, PyTorch  
+**Integraciones:** WhatsApp Business API
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 🚀 Instalación
 
 ```bash
-ng test
+# Clonar repositorio
+git clone https://github.com/Crypt0xDev/deteccion-cascos.git
+cd deteccion-cascos
+
+# Instalar dependencias
+npm install
+
+# Iniciar aplicación
+npm start
 ```
 
-## Running end-to-end tests
+Aplicación disponible en `http://localhost:4200`
 
-For end-to-end (e2e) testing, run:
+**Backend API:** Requiere Python 3.8+ y FastAPI corriendo en `http://localhost:8000`
 
-```bash
-ng e2e
+## 📡 API Endpoints
+
+```typescript
+POST /detect/              → Análisis de imagen
+POST /detect/image         → Imagen con anotaciones
+POST /alert/whatsapp       → Envío de alertas
 ```
+
+## 🏗️ Arquitectura
+
+```
+Frontend (Angular) → API (FastAPI) → Modelo IA (YOLO v8)
+```
+
+## 👥 Equipo
+
+**Proyecto Grupo 5 - UNSM**  
+Desarrollo, IA y Testing
+
+## 📝 Licencia
+
+Prototipo educativo - Universidad Nacional de San Martín
+
+---
+
+<div align="center">
+
+**Desarrollado para mejorar la seguridad industrial** 🛡️
+
+⚠️ Prototipo educativo · No usar en producción sin entrenamiento adicional
+
+</div>
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
