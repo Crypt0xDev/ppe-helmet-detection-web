@@ -21,7 +21,7 @@ app = FastAPI(
 # Habilitar CORS para el frontend Angular (localhost:4200 y producción)
 allowed_origins = os.getenv(
     "ALLOWED_ORIGINS", 
-    "http://localhost:4200,http://127.0.0.1:4200"
+    "https://deteccion-cascos.vercel.app,http://localhost:4200,http://127.0.0.1:4200"
 ).split(",")
 
 app.add_middleware(
