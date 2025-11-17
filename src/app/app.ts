@@ -104,17 +104,17 @@ export class App implements OnDestroy {
 
       const json = (await resJson.json()) as DetectionStatus;
       this.status.set(json);
-      
+
       // Validación de consistencia de datos
       let finalMessage = json.status_message;
       let isSafe = json.safe;
-      
+
       // Si se detectan cascos pero no personas, hay un problema en el modelo
       if (json.helmet_count > 0 && json.head_count === 0 && json.safe) {
         finalMessage = `⚠️ ADVERTENCIA: Se detectaron ${json.helmet_count} casco(s) pero ninguna persona. El modelo puede estar detectando incorrectamente. Revisa la imagen anotada.`;
         isSafe = false; // Marcar como no seguro por precaución
       }
-      
+
       this.resultado.set(finalMessage);
 
       // Actualizar estadísticas con el estado corregido
@@ -305,17 +305,17 @@ export class App implements OnDestroy {
       }
       const json = (await res.json()) as DetectionStatus;
       this.status.set(json);
-      
+
       // Validación de consistencia de datos
       let finalMessage = json.status_message;
       let isSafe = json.safe;
-      
+
       // Si se detectan cascos pero no personas, hay un problema en el modelo
       if (json.helmet_count > 0 && json.head_count === 0 && json.safe) {
         finalMessage = `⚠️ ADVERTENCIA: Se detectaron ${json.helmet_count} casco(s) pero ninguna persona. Posible falso positivo del modelo.`;
         isSafe = false; // Marcar como no seguro por precaución
       }
-      
+
       this.resultado.set(finalMessage);
       this.annotatedImageUrl.set(null);
 
