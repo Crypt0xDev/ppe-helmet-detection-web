@@ -1,106 +1,59 @@
-# Ì∂∫ Frontend - Sistema de Detecci√≥n de Cascos
+# DeteccionEep
 
-Frontend Angular para sistema de detecci√≥n de cascos de seguridad usando YOLOv8.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.10.
 
-## Ì∫Ä Deploy en Vercel
+## Development server
 
-Aplicaci√≥n desplegada en: **https://deteccion-cascos.vercel.app**
-
-### Configuraci√≥n
-
-El frontend se conecta autom√°ticamente con el backend. Para cambiar la URL del backend:
-
-1. Edita `src/environments/environment.ts`
-2. Actualiza `apiUrl` con la URL de Railway
-3. Commit y push (Vercel redespliega autom√°ticamente)
-
-## Ìª†Ô∏è Desarrollo Local
-
-### Requisitos
-
-- Node.js 18+
-- npm
-
-### Instalaci√≥n
+To start a local development server, run:
 
 ```bash
-# Clonar repositorio
-git clone https://github.com/Crypt0xDev/deteccion-cascos.git
-cd deteccion-cascos
-
-# Instalar dependencias
-npm install
-
-# Ejecutar en desarrollo
-npm start
+ng serve
 ```
 
-La aplicaci√≥n estar√° disponible en: http://localhost:4200
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-### Build de producci√≥n
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
 ```bash
-npm run build
+ng generate component component-name
 ```
 
-## Ì≥¶ Estructura del Proyecto
-
-```
-deteccion-cascos/
-‚îú‚îÄ‚îÄ src/
-‚îÇ   ‚îú‚îÄ‚îÄ app/               # Componentes Angular
-‚îÇ   ‚îú‚îÄ‚îÄ environments/      # Configuraci√≥n de entornos
-‚îÇ   ‚îî‚îÄ‚îÄ index.html
-‚îú‚îÄ‚îÄ public/                # Archivos est√°ticos
-‚îú‚îÄ‚îÄ angular.json           # Configuraci√≥n Angular
-‚îú‚îÄ‚îÄ package.json
-‚îî‚îÄ‚îÄ README.md
-```
-
-## Ì¥ß Tecnolog√≠as
-
-- Angular 20
-- TypeScript 5.6
-- RxJS 7.8
-- Zone.js 0.15
-
-## Ìºê Caracter√≠sticas
-
-- **Detecci√≥n por imagen**: Sube una imagen y obt√©n an√°lisis de seguridad
-- **Detecci√≥n en tiempo real**: Usa c√°mara web para monitoreo continuo
-- **Interfaz responsiva**: Dise√±o moderno y adaptable
-- **Notificaciones**: Integraci√≥n con WhatsApp v√≠a backend
-
-## Ì¥ó Enlaces
-
-- **Backend**: https://github.com/Crypt0xDev/deteccion-cascos-backend
-- **Despliegue**: https://deteccion-cascos.vercel.app
-
-## Ì≥ù Configuraci√≥n de Entornos
-
-### Production (`src/environments/environment.ts`)
-
-```typescript
-export const environment = {
-  production: true,
-  apiUrl: 'TU-URL-DE-RAILWAY'  // Actualizar con URL de Railway
-};
-```
-
-### Development (`src/environments/environment.development.ts`)
-
-```typescript
-export const environment = {
-  production: false,
-  apiUrl: 'http://localhost:8000'  // Backend local
-};
-```
-
-## Ì∫Ä Scripts Disponibles
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
 ```bash
-npm start          # Servidor de desarrollo
-npm run build      # Build de producci√≥n
-npm test           # Ejecutar tests
-npm run watch      # Build en modo watch
+ng generate --help
 ```
+
+## Building
+
+To build the project run:
+
+```bash
+ng build
+```
+
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
