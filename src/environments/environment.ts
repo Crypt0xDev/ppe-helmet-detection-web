@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://web-production-67683.up.railway.app'
+  apiUrl: 'https://Crypt0xDev-deteccion-cascos-yolov8.hf.space'
 };
