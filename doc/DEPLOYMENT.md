@@ -6,7 +6,7 @@ Proyecto completo con Frontend Angular + Backend FastAPI + YOLOv8
 
 ```
 ├── deteccion-eep/    → Frontend Angular (Vercel)
-└── iape/             → Backend FastAPI (Render)
+└── iape/             → Backend FastAPI (Fly.io)
 ```
 
 ## 🎯 PASO A PASO - DEPLOYMENT GRATUITO
@@ -47,33 +47,62 @@ git push -u origin main
 
 ---
 
-### 2️⃣ DEPLOY BACKEND EN RENDER (SEGUNDO)
+### 2️⃣ DEPLOY BACKEND EN FLY.IO (SEGUNDO)
 
-1. **Ir a** → https://render.com
-2. **Sign Up** → Con tu cuenta de GitHub (gratis)
-3. **New +** → **Web Service**
-4. **Conectar repositorio** → `deteccion-cascos-backend` (o `deteccion-cascos` si usaste monorepo)
-5. **Configurar:**
-   - **Name**: `deteccion-cascos-api`
-   - **Region**: Oregon (más cerca a Perú)
-   - **Root Directory**: `iape` (si es monorepo) o déjalo vacío
-   - **Runtime**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn src.app:app --host 0.0.0.0 --port $PORT`
-   - **Plan**: **Free** ✅
+#### A. Instalar Fly CLI
 
-6. **Environment Variables** (muy importante):
-   ```
-   MODEL_PATH=best.pt
-   CONFIDENCE_THRESHOLD=0.1
-   WHATSAPP_API_KEY=7457414
-   WHATSAPP_PHONE=51969833318
-   ALLOWED_ORIGINS=http://localhost:4200
-   ```
+**Windows (PowerShell como Administrador):**
+```powershell
+iwr https://fly.io/install.ps1 -useb | iex
+```
 
-7. **Create Web Service** → Espera 5-10 minutos
+**Verificar instalación:**
+```bash
+fly version
+```
 
-8. **Copiar URL** → Ejemplo: `https://deteccion-cascos-api.onrender.com`
+#### B. Autenticarse en Fly.io
+
+```bash
+fly auth login
+```
+Se abrirá el navegador → Sign up con GitHub (gratis)
+
+#### C. Desplegar el Backend
+
+```bash
+# Ir a la carpeta del backend
+cd "c:/Users/alexi/Desktop/Curso UNSM/Poyecto grupo 5/deteccion-cascos/iape"
+
+# Lanzar aplicación en Fly.io
+fly launch
+
+# Preguntas que te hará:
+# 1. "Choose an app name" → deteccion-cascos (o el que prefieras)
+# 2. "Choose a region" → gru (São Paulo - más cerca de Perú)
+# 3. "Would you like to set up a PostgreSQL database?" → No
+# 4. "Would you like to set up an Upstash Redis database?" → No
+# 5. "Would you like to deploy now?" → Yes
+
+# Espera 3-5 minutos mientras se construye y despliega
+```
+
+#### D. Configurar Variables de Entorno
+
+```bash
+# Agregar CORS para tu frontend
+fly secrets set ALLOWED_ORIGINS="https://deteccion-cascos.vercel.app,http://localhost:4200"
+
+# Las demás variables ya están en fly.toml
+```
+
+#### E. Obtener URL de tu API
+
+```bash
+fly status
+```
+
+Tu URL será: `https://deteccion-cascos.fly.dev`
 
 ---
 
@@ -87,7 +116,7 @@ Editar `src/environments/environment.ts`:
 ```typescript
 export const environment = {
   production: true,
-  apiUrl: 'https://deteccion-cascos-api.onrender.com'  // ← Tu URL de Render
+  apiUrl: 'https://deteccion-cascos.fly.dev'  // ← Tu URL de Fly.io
 };
 ```
 
@@ -120,13 +149,11 @@ git push
 
 ### 5️⃣ ACTUALIZAR CORS EN BACKEND (QUINTO)
 
-1. Ir a **Render Dashboard** → Tu servicio
-2. **Environment** → Editar `ALLOWED_ORIGINS`
-3. Cambiar a:
-   ```
-   https://deteccion-cascos.vercel.app,http://localhost:4200
-   ```
-4. **Save Changes** → Se reiniciará automáticamente
+```bash
+# Ya lo hicimos en el paso 2D, pero si necesitas actualizar:
+cd iape
+fly secrets set ALLOWED_ORIGINS="https://deteccion-cascos.vercel.app,http://localhost:4200"
+```
 
 ---
 
@@ -143,7 +170,7 @@ git push
 | Servicio | Plan | Costo |
 |----------|------|-------|
 | GitHub | Free | $0 |
-| Render | Free | $0 (750 hrs/mes) |
+| Fly.io | Free | $0 (3 máquinas pequeñas + 160 GB transfer) |
 | Vercel | Hobby | $0 |
 | **TOTAL** | | **$0/mes** ✅ |
 
@@ -151,10 +178,11 @@ git push
 
 ## ⚠️ LIMITACIONES DEL PLAN GRATUITO
 
-### Render Free:
-- Se "duerme" después de 15 minutos sin uso
-- Primera petición tarda 30-60 segundos en despertar
-- 750 horas/mes (suficiente para 1 mes)
+### Fly.io Free:
+- 3 máquinas compartidas gratis (1 GB RAM cada una)
+- Se "duerme" después de inactividad (auto_stop_machines = true)
+- Primera petición tarda 5-10 segundos en despertar (más rápido que Render)
+- 160 GB bandwidth/mes
 
 ### Vercel Hobby:
 - Sin limitaciones prácticas para este proyecto
@@ -162,16 +190,35 @@ git push
 
 ---
 
-## 🔧 COMANDOS ÚTILES
+## 🔧 COMANDOS ÚTILES FLY.IO
 
 ```bash
-# Ver logs en Render
-# → Dashboard → Logs (en tiempo real)
+# Ver logs en tiempo real
+fly logs
+
+# Ver estado de la aplicación
+fly status
+
+# Abrir dashboard web
+fly dashboard
+
+# Redesplegar después de cambios
+cd iape
+fly deploy
+
+# Ver máquinas activas
+fly machine list
+
+# SSH a la máquina (para debugging)
+fly ssh console
+
+# Escalar memoria (si necesitas más)
+fly scale memory 2048  # 2 GB
+
+# Ver uso de recursos
+fly status
 
 # Redesplegar Vercel
-git push  # Automático
-
-# Redesplegar Render
 git push  # Automático
 ```
 
