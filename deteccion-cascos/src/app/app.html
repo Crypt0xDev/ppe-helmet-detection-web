@@ -1,0 +1,149 @@
+<div class="min-h-screen bg-gray-900 text-white font-sans flex flex-col items-center p-4 sm:p-8">
+  <header class="top-bar w-full max-w-6xl flex justify-between items-center py-4 px-6 bg-gray-800 rounded-xl shadow-lg mb-8">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-lg font-bold">EE</div>
+      <div>
+        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">Detección de Casos y EEP</h1>
+        <p class="text-xs text-gray-400">Interfaz de prueba – modelo aún en entrenamiento</p>
+      </div>
+    </div>
+    <div class="status-pill text-sm font-medium bg-green-600/20 text-green-400 px-3 py-1 rounded-full flex items-center space-x-2">
+      <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+      <span>Modo demo</span>
+    </div>
+  </header>
+
+  <main class="layout w-full max-w-6xl">
+    @if (mode() === 'selection') {
+      <section class="p-8 bg-gray-800 rounded-2xl shadow-2xl transition-all duration-300">
+        <h2 class="text-3xl font-bold mb-6 text-center text-blue-400">Selecciona el Modo de Operación</h2>
+        <p class="text-center text-gray-400 mb-10">
+          Elige si deseas analizar una imagen estática o usar la detección en tiempo real a través de tu cámara.
+        </p>
+        <div class="grid md:grid-cols-2 gap-8">
+          <button (click)="selectMode('upload')" class="mode-card bg-gray-700 hover:bg-gray-600 p-8 rounded-xl transition-all duration-300 flex flex-col items-center text-center shadow-lg hover:shadow-blue-500/50 transform hover:scale-[1.02]">
+            <div class="text-6xl mb-4">🖼️</div>
+            <h3 class="text-2xl font-semibold mb-2">Análisis de Imagen Estática</h3>
+            <p class="text-gray-400">Sube un archivo de imagen (JPG, PNG) para una detección única y obtener un resultado detallado.</p>
+          </button>
+          <button (click)="selectMode('realtime')" class="mode-card bg-gray-700 hover:bg-gray-600 p-8 rounded-xl transition-all duration-300 flex flex-col items-center text-center shadow-lg hover:shadow-green-500/50 transform hover:scale-[1.02]">
+            <div class="text-6xl mb-4">📹</div>
+            <h3 class="text-2xl font-semibold mb-2">Detección en Tiempo Real</h3>
+            <p class="text-gray-400">Utiliza la cámara de tu dispositivo para un monitoreo continuo de cuadros (frames).</p>
+          </button>
+        </div>
+      </section>
+    }
+
+    @if (mode() !== 'selection') {
+      <section class="card bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8">
+        <button (click)="selectMode('selection')" class="flex items-center text-blue-400 hover:text-blue-300 mb-6 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+          Volver a la selección de modo
+        </button>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div class="lg:col-span-2 space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-gray-700 pb-2">
+              {{ mode() === 'upload' ? 'Entrada: Subir Imagen' : 'Entrada: Detección en Tiempo Real' }}
+            </h2>
+
+            @if (mode() === 'upload') {
+              <p class="text-gray-400">Sube una imagen para iniciar el proceso de detección de elementos de protección personal (EEP).</p>
+              <div (click)="fileInput.click()" class="upload-area border-2 border-dashed border-blue-600 bg-gray-700 p-8 rounded-xl text-center cursor-pointer hover:bg-gray-700/70 transition-colors">
+                <div class="text-5xl mb-2 text-blue-400">⬆</div>
+                <p class="text-lg font-semibold text-white">Haz clic para seleccionar una imagen</p>
+                <p class="text-sm text-gray-400">Formatos comunes (JPG, PNG, etc.)</p>
+                <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+              </div>
+              <button class="w-full btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors disabled:opacity-50" (click)="procesar()" [disabled]="!imagen()">
+                Detectar Imagen (Paso 1/2)
+              </button>
+            }
+
+            @if (mode() === 'realtime') {
+              <p class="text-gray-400">Activa la cámara para comenzar a capturar cuadros y enviarlos a la API para detección continua.</p>
+              <div class="preview-card bg-gray-900 p-2 rounded-xl">
+                <video #videoEl autoplay muted playsinline class="w-full max-h-96 object-contain bg-black rounded-lg"></video>
+                <canvas #canvasEl hidden></canvas>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button class="btn flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg transition-colors disabled:opacity-50 min-w-[150px]" (click)="startCamera()" [disabled]="isCameraOn()">
+                  <span class="mr-2">📷</span> Encender Cámara
+                </button>
+                <button class="btn flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 rounded-lg transition-colors disabled:opacity-50 min-w-[150px]" (click)="stopCamera()" [disabled]="!isCameraOn()">
+                  Apagar Cámara
+                </button>
+                <button class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-colors disabled:opacity-50 min-w-[150px]" (click)="startRealtimeDetection()" [disabled]="!isCameraOn() || isDetecting()">
+                  <span class="mr-2">▶️</span> Iniciar Detección
+                </button>
+                <button class="btn flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition-colors disabled:opacity-50 min-w-[150px]" (click)="stopRealtimeDetection()" [disabled]="!isDetecting()">
+                  <span class="mr-2">⏹️</span> Detener Detección
+                </button>
+              </div>
+            }
+          </div>
+
+          <div class="lg:col-span-1 space-y-6">
+            <div class="preview-card bg-gray-700 p-4 rounded-xl shadow-inner">
+              <div class="flex justify-between items-center mb-3 border-b border-gray-600 pb-2">
+                <h3 class="text-lg font-semibold text-white">Vista Previa / Resultado Anotado</h3>
+                @if (imagen()) {
+                  <span class="text-xs bg-gray-600 px-2 py-0.5 rounded-full">{{ mode() === 'upload' ? 'Imagen de carga' : 'Último cuadro' }}</span>
+                }
+              </div>
+              @if (preview()) {
+                <div class="aspect-video overflow-hidden rounded-lg border border-gray-600">
+                  <img [src]="preview()" alt="Vista previa de la imagen" class="w-full h-full object-contain">
+                </div>
+              } @else {
+                <div class="h-48 flex items-center justify-center bg-gray-600 rounded-lg border-2 border-dashed border-gray-500">
+                  <p class="text-gray-400 text-center text-sm p-4">
+                    {{ mode() === 'upload' ? 'Sube un archivo para ver la vista previa.' : 'Activa la cámara para ver el video.' }}
+                  </p>
+                </div>
+              }
+            </div>
+
+            @if (resultado()) {
+              <div class="result-card bg-gray-700 p-4 rounded-xl shadow-xl border-l-4" 
+                   [class.border-red-500]="status()?.safe === false"
+                   [class.border-green-500]="status()?.safe === true">
+                <h3 class="text-xl font-bold mb-2">Estado de Detección</h3>
+                <p class="text-lg mb-3"
+                   [class.text-red-300]="status()?.safe === false"
+                   [class.text-green-300]="status()?.safe === true">
+                  {{ resultado() }}
+                </p>
+                @if (status()) {
+                  <div class="text-sm text-gray-300 pt-2 border-t border-gray-600">
+                    <p>Casco(s) detectado(s): <span class="font-semibold">{{ status()?.helmet_count }}</span></p>
+                    <p>Cabeza(s) detectada(s): <span class="font-semibold">{{ status()?.head_count }}</span></p>
+                  </div>
+                }
+                @if (annotatedImageUrl()) {
+                  <div class="mt-4 pt-4 border-t border-gray-600">
+                    <h4 class="text-base font-medium mb-2">Detección Anotada</h4>
+                    <img [src]="annotatedImageUrl()" alt="Detección anotada" class="w-full rounded-lg border border-gray-600">
+                  </div>
+                }
+              </div>
+            } @else if (mode() === 'upload' && imagen()) {
+              <div class="bg-gray-700 p-4 rounded-xl text-center text-gray-400">
+                Presiona <strong>Detectar Imagen</strong> para obtener el resultado.
+              </div>
+            } @else if (mode() === 'realtime') {
+              <div class="bg-gray-700 p-4 rounded-xl text-center text-gray-400">
+                Inicia la detección en tiempo real para ver los resultados aquí.
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+    }
+  </main>
+
+  <footer class="mt-8 pt-4 border-t border-gray-700 w-full max-w-6xl text-center text-gray-500 text-sm">
+    <span>Prototipo UI · Angular + TypeScript</span>
+  </footer>
+</div>
