@@ -1,7 +1,0 @@
-
-# data.yaml - hard-hat detection (YOLOv8)
-train: /home/darikali28/iape/hard-hat-detection/images_train
-val: /home/darikali28/iape/hard-hat-detection/images_val
-
-nc: 2
-names: ['head', 'helmet']
