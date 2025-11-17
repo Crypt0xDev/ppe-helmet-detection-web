@@ -1,12 +1,12 @@
 [phases.setup]
-nixPkgs = ["python311", "python311Packages.pip", "python311Packages.virtualenv"]
+nixPkgs = ["python311"]
 
 [phases.install]
 cmds = [
-  "python -m venv /opt/venv",
-  ". /opt/venv/bin/activate && pip install --upgrade pip",
-  ". /opt/venv/bin/activate && pip install -r iape/requirements.txt"
+  "python -m venv --system-site-packages venv",
+  "venv/bin/pip install --upgrade pip",
+  "venv/bin/pip install -r requirements.txt"
 ]
 
 [start]
-cmd = ". /opt/venv/bin/activate && cd iape && uvicorn src.app:app --host 0.0.0.0 --port $PORT"
+cmd = "venv/bin/python -m uvicorn iape.src.app:app --host 0.0.0.0 --port $PORT"
