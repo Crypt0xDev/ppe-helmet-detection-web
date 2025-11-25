@@ -1,12 +1,22 @@
 {
-  "name": "deteccion-eep",
-  "version": "0.0.0",
+  "name": "ppe-helmet-detection-frontend",
+  "version": "1.0.0",
+  "description": "Sistema web de detección de equipos de protección personal (EPP) mediante IA - Frontend Angular",
+  "author": "Crypt0xDev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Crypt0xDev/deteccion-cascos.git"
+  },
+  "keywords": ["ppe", "helmet-detection", "computer-vision", "yolov8", "angular", "safety"],
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "ng lint"
   },
   "prettier": {
     "printWidth": 100,

@@ -3,10 +3,13 @@ import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, s
 import { environment } from '../environments/environment';
 
 interface DetectionStatus {
-  status_message: string;
+  message: string;
   safe: boolean;
-  helmet_count: number;
-  head_count: number;
+  total: number;
+  con_casco: number;
+  sin_casco: number;
+  unmatched_helmets?: number;
+  warning?: string;
 }
 
 interface Statistics {
@@ -44,10 +47,9 @@ export class App implements OnDestroy {
   private intervalId: number | null = null;
   private busy = false;
 
-  detectUrl = `${environment.apiUrl}/detect/`;
+  private readonly detectUrl = `${environment.apiUrl}/detect/`;
   isCameraOn = signal(false);
   isDetecting = signal(false);
-
   status = signal<DetectionStatus | null>(null);
   annotatedImageUrl = signal<string | null>(null);
 
@@ -97,7 +99,8 @@ export class App implements OnDestroy {
       const resJson = await fetch(this.detectUrl, { method: 'POST', body: formData });
       if (!resJson.ok) {
         const error = await resJson.text();
-        this.resultado.set(`❌ Error al conectar con el servidor de IA`);
+        console.error('Error del servidor:', error);
+        this.resultado.set(`❌ Error: ${resJson.status} - ${resJson.statusText}`);
         this.isLoading.set(false);
         return;
       }
@@ -105,29 +108,13 @@ export class App implements OnDestroy {
       const json = (await resJson.json()) as DetectionStatus;
       this.status.set(json);
 
-      // Mejorar el mensaje cuando se detectan personas
-      const totalPersonas = json.helmet_count + json.head_count;
-      let mensajeFinal = json.status_message;
-
-      if (totalPersonas > 0) {
-        if (json.safe) {
-          mensajeFinal = `✅ SEGURO: Todas las personas llevan casco.`;
-        } else {
-          mensajeFinal = `⚠️ RIESGO: Se detectaron personas sin casco.`;
-        }
-      }
-
-      this.resultado.set(mensajeFinal);
-
-      // Actualizar estadísticas
+      this.resultado.set(json.message);      // Actualizar estadísticas
       this.updateStatistics(json.safe);
 
-      // Reproducir sonido de alerta
       if (json.safe === false) {
         this.playAlertSound();
         await this.sendWhatsAppAlert("⚠️ ALERTA: Persona sin casco detectada.");
       }
-
 
       const formData2 = new FormData();
       formData2.append('file', currentImagen);
@@ -139,9 +126,9 @@ export class App implements OnDestroy {
         if (prevUrl) URL.revokeObjectURL(prevUrl);
         this.annotatedImageUrl.set(URL.createObjectURL(blob));
       }
-    } catch (e) {
-      console.error('Error al enviar imagen:', e);
-      this.resultado.set('❌ Error de conexión. Verifica que el servidor esté activo.');
+    } catch (error) {
+      console.error('Error al enviar imagen:', error);
+      this.resultado.set(`❌ Error de conexión. Verifica que la API esté activa.`);
     } finally {
       this.isLoading.set(false);
     }
@@ -209,26 +196,22 @@ export class App implements OnDestroy {
       this.resultado.set('❌ Permiso de cámara denegado. Permite el acceso para continuar.');
     }
   }
-/*HDFKJSKFJHSDKJFHSKDFH */
-  async sendWhatsAppAlert(message: string) {
-  try {
-    const res = await fetch(`${environment.apiUrl}/alert/whatsapp`, {
-      method: 'POST',
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: message
-      })
-    });
 
-    if (!res.ok) {
-      console.error("Error al enviar alerta:", await res.text());
-    } else {
-      console.log("Alerta WhatsApp enviada correctamente.");
+  private async sendWhatsAppAlert(message: string): Promise<void> {
+    try {
+      const res = await fetch(`${environment.apiUrl}/alert/whatsapp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+
+      if (!res.ok) {
+        console.error('Error al enviar alerta WhatsApp:', await res.text());
+      }
+    } catch (error) {
+      console.error('Error al enviar alerta WhatsApp:', error);
     }
-  } catch (err) {
-    console.error("Error WhatsApp:", err);
   }
-}
 
   stopCamera() {
     this.stopRealtimeDetection();
@@ -307,29 +290,12 @@ export class App implements OnDestroy {
       }
       const json = (await res.json()) as DetectionStatus;
       this.status.set(json);
+      this.resultado.set(json.message);
+      this.annotatedImageUrl.set(null);      this.updateStatistics(json.safe);
 
-      // Mejorar el mensaje cuando se detectan personas
-      const totalPersonas = json.helmet_count + json.head_count;
-      let mensajeFinal = json.status_message;
-
-      if (totalPersonas > 0) {
-        if (json.safe) {
-          mensajeFinal = `✅ SEGURO: Todas las personas llevan casco.`;
-        } else {
-          mensajeFinal = `⚠️ RIESGO: Se detectaron personas sin casco.`;
-        }
-      }
-
-      this.resultado.set(mensajeFinal);
-      this.annotatedImageUrl.set(null);
-
-      // Actualizar estadísticas
-      this.updateStatistics(json.safe);
-
-      // Alerta automática en tiempo real
       if (json.safe === false) {
         this.playAlertSound();
-        await this.sendWhatsAppAlert("⚠️ ALERTA EN TIEMPO REAL: Persona sin casco detectada.");
+        await this.sendWhatsAppAlert('⚠️ ALERTA: Persona sin casco detectada en tiempo real.');
       }
 
     } catch (error) {

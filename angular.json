@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "deteccion-eep": {
+    "ppe-helmet-detection-frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -30,6 +30,12 @@
           },
           "configurations": {
             "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.development.ts",
+                  "with": "src/environments/environment.ts"
+                }
+              ],
               "budgets": [
                 {
                   "type": "initial",
@@ -56,10 +62,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "deteccion-eep:build:production"
+              "buildTarget": "ppe-helmet-detection-frontend:build:production"
             },
             "development": {
-              "buildTarget": "deteccion-eep:build:development"
+              "buildTarget": "ppe-helmet-detection-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"

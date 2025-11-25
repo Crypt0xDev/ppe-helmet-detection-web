@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://Crypt0xDev-deteccion-cascos-yolov8.hf.space'
+  apiUrl: 'https://crypt0xdev-ppe-helmet-detection-api.hf.space'
 };
