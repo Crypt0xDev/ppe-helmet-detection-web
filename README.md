@@ -1,80 +1,139 @@
-# 🛡️ Sistema de Detección de EPP con IA
-
 <div align="center">
 
-![Angular](https://img.shields.io/badge/Angular-20.3-DD0031?style=flat-square&logo=angular)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=flat-square&logo=typescript)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Production-success?style=flat-square)
+# 🛡️ PPE Helmet Detection System
 
-**Detección automática de equipos de protección personal mediante Computer Vision**
+### Intelligent Safety Compliance Monitoring with Computer Vision
 
-[Demo en Vivo](#) • [API Backend](https://huggingface.co/spaces/Crypt0xDev/PPE-Helmet-Detection-API) • [Reportar Bug](https://github.com/Crypt0xDev/deteccion-cascos/issues)
+[![Angular](https://img.shields.io/badge/Angular-20.3-DD0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.io/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![YOLOv8](https://img.shields.io/badge/YOLOv8-Detection-00FFFF?style=for-the-badge&logo=pytorch&logoColor=white)](https://github.com/ultralytics/ultralytics)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Production-success?style=for-the-badge)](https://deteccion-cascos.vercel.app/)
+
+[🚀 **Live Demo**](https://deteccion-cascos.vercel.app/) • [🔧 **API Backend**](https://huggingface.co/spaces/Crypt0xDev/PPE-Helmet-Detection-API) • [📝 **Report Issue**](https://github.com/Crypt0xDev/PPE-Helmet-Detection-Web/issues)
+
+---
 
 </div>
 
+## 📋 Overview
+
+> **Advanced web-based system for real-time detection of proper safety helmet usage using computer vision technology.**
+
+Designed specifically for **industrial environments**, **construction sites**, and **mining operations** to ensure workplace safety compliance and reduce accidents.
+
+<div align="center">
+
+| 🎯 Accurate Detection | 🎥 Real-Time Analysis | 🚨 Instant Alerts |
+|:---:|:---:|:---:|
+| Validates helmet position | Live camera monitoring | WhatsApp notifications |
+
+</div>
+
+## ✨ Key Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🎯 Smart Detection
+- **Position Validation**: Verifies helmet is properly worn on head
+- **Dual Detection**: Separate detection for helmets and heads
+- **Spatial Association**: IoU > 0.1 with horizontal overlap > 30%
+- **False Positive Prevention**: Identifies helmets in hands/ground
+
+</td>
+<td width="50%">
+
+### 📊 Real-Time Monitoring
+- **Live Camera Feed**: Continuous webcam surveillance
+- **Instant Analysis**: Real-time processing with YOLOv8
+- **Live Statistics**: Updated safety metrics dashboard
+- **Visual Feedback**: Annotated detection results
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🚨 Alert System
+- **WhatsApp Integration**: Automatic notifications
+- **Audio Alerts**: Sound warnings for violations
+- **Visual Indicators**: Color-coded status display
+- **Compliance Tracking**: Historical data analysis
+
+</td>
+<td width="50%">
+
+### 💻 Modern Interface
+- **Responsive Design**: Mobile, tablet, desktop optimized
+- **Professional UI**: Dark theme with gradient effects
+- **Smooth Animations**: 60fps transitions
+- **Intuitive Controls**: User-friendly operation
+
+</td>
+</tr>
+</table>
+
+## 🎯 Problem Solved
+
+<div align="center">
+
+### ❌ Before vs ✅ After
+
+| Previous System | Our Solution |
+|:---|:---|
+| ❌ Counted helmets in hands as "worn" | ✅ Validates helmet is on head |
+| ❌ False positives with carried helmets | ✅ Spatial association verification |
+| ❌ Inaccurate compliance reporting | ✅ Precise position detection |
+
+</div>
+
+**Technical Approach:**
+```python
+# Validation Algorithm
+✅ Dual Detection: Helmets + Heads detected separately
+✅ Horizontal Overlap: > 30% required
+✅ Vertical Distance: Validated positioning
+✅ IoU Threshold: > 0.1 (Intersection over Union)
+⚠️  Unmatched Helmets: Flagged as not worn
+```
+
 ---
 
-## 📋 Descripción
-
-Sistema web inteligente que detecta el **uso correcto de cascos de seguridad** en tiempo real mediante inteligencia artificial avanzada. Diseñado para entornos industriales, construcción y minería.
-
-### ✨ Características Principales
-
-- 🎯 **Detección Inteligente**: Verifica que el casco esté correctamente puesto en la cabeza (no solo detectado)
-- 📸 **Análisis de Imágenes**: Procesamiento de fotografías estáticas con resultados instantáneos
-- 🎥 **Monitoreo en Tiempo Real**: Vigilancia continua mediante cámara web
-- 📊 **Estadísticas en Vivo**: Panel con métricas de seguridad actualizadas
-- 🚨 **Alertas Automáticas**: Notificaciones vía WhatsApp ante detección de riesgos
-- 📱 **Diseño Responsive**: Interfaz adaptable a móviles, tablets y escritorio
-- ⚡ **Alto Rendimiento**: Procesamiento optimizado con YOLOv8
-
-### 🎯 Problema Resuelto
-
-**Antes:** Si 3 personas tenían cascos en las manos, el sistema contaba incorrectamente 3 personas "con casco".
-
-**Ahora:** El sistema verifica mediante asociación espacial que el casco esté correctamente puesto sobre la cabeza:
-- ✅ Detección dual: cascos y cabezas por separado
-- ✅ Verificación de superposición horizontal > 30%
-- ✅ Validación de distancia vertical y posición correcta
-- ✅ IoU (Intersection over Union) > 0.1
-- ⚠️ Identifica cascos no puestos (en manos, suelo, etc.)
-
----
-
-## 🛠️ Stack Tecnológico
+## 🛠️ Technology Stack
 
 **Frontend:**
-- Angular 20.3 con Signals
-- TypeScript 5.9
-- TailwindCSS para estilos
+- Angular 20.3 with Signals Architecture
+- TypeScript 5.9 for type safety
+- TailwindCSS for modern styling
 - Standalone Components
 
 **Backend (API):**
-- FastAPI (Python)
-- YOLOv8 para detección
-- OpenCV para procesamiento de imágenes
-- Hugging Face Spaces para hosting
+- FastAPI (Python) - High-performance API
+- YOLOv8 for object detection
+- OpenCV for image processing
+- Hugging Face Spaces deployment
 
-**Integraciones:**
+**Integrations:**
 - WhatsApp Business API
-- Twilio para notificaciones
+- Real-time notification system
 
 ---
 
-## 🚀 Instalación y Uso
+## 🚀 Installation & Usage
 
-### Prerrequisitos
+### Prerequisites
 
-- Node.js 18+ y npm
+- Node.js 18+ and npm
 - Git
 
 ### Instalación Local
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/Crypt0xDev/deteccion-cascos.git
-cd deteccion-cascos
+git clone https://github.com/Crypt0xDev/PPE-Helmet-Detection-Web.git
+cd PPE-Helmet-Detection-Web
 
 # Instalar dependencias
 npm install
@@ -95,11 +154,11 @@ Los archivos compilados estarán en `dist/`
 
 ---
 
-## ⚙️ Configuración
+## ⚙️ Configuration
 
-### Variables de Entorno
+### Environment Variables
 
-El proyecto utiliza dos archivos de configuración en `src/environments/`:
+The project uses two configuration files in `src/environments/`:
 
 **`environment.development.ts`** (Desarrollo):
 ```typescript
@@ -166,7 +225,7 @@ La API está desplegada en Hugging Face Spaces:
 ## 📂 Estructura del Proyecto
 
 ```
-deteccion-cascos/
+PPE-Helmet-Detection-Web/
 ├── src/
 │   ├── app/
 │   │   ├── app.ts              # Componente principal
@@ -250,9 +309,9 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 
 <div align="center">
 
-**⚠️ Prototipo Educativo**  
-Desarrollado como proyecto académico para UNSM • 2025
+**🎓 Academic Project**
+Developed for Universidad Nacional de San Martín (UNSM) • 2025
 
-[⬆ Volver arriba](#️-sistema-de-detección-de-epp-con-ia)
+[⬆ Back to top](#️-ppe-helmet-detection---ai-safety-system)
 
 </div>

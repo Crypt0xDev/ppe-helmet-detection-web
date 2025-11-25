@@ -1,12 +1,12 @@
 {
-  "name": "ppe-helmet-detection-frontend",
+  "name": "ppe-helmet-detection-web",
   "version": "1.0.0",
-  "description": "Sistema web de detección de equipos de protección personal (EPP) mediante IA - Frontend Angular",
+  "description": "AI-powered PPE helmet detection system with real-time monitoring and safety compliance alerts",
   "author": "Crypt0xDev",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Crypt0xDev/deteccion-cascos.git"
+    "url": "https://github.com/Crypt0xDev/PPE-Helmet-Detection-Web.git"
   },
   "keywords": ["ppe", "helmet-detection", "computer-vision", "yolov8", "angular", "safety"],
   "scripts": {
