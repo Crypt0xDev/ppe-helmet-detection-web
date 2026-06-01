@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild, signal } from '@angular/core';
 import { environment } from '../environments/environment';
 
 interface DetectionStatus {
@@ -27,7 +27,7 @@ interface Statistics {
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnDestroy {
+export class App implements OnInit, OnDestroy {
   mode = signal<'selection' | 'upload' | 'realtime'>('selection');
   isLoading = signal(false);
   statistics = signal<Statistics>({
@@ -52,6 +52,27 @@ export class App implements OnDestroy {
   isDetecting = signal(false);
   status = signal<DetectionStatus | null>(null);
   annotatedImageUrl = signal<string | null>(null);
+  apiStatus = signal<'checking' | 'warming' | 'ready' | 'error'>('checking');
+
+  ngOnInit() {
+    this.checkApiStatus();
+  }
+
+  private async checkApiStatus() {
+    const WARM_THRESHOLD_MS = 3000;
+    const timer = setTimeout(() => {
+      if (this.apiStatus() === 'checking') this.apiStatus.set('warming');
+    }, WARM_THRESHOLD_MS);
+
+    try {
+      const res = await fetch(`${environment.apiUrl}/`, { signal: AbortSignal.timeout(60000) });
+      clearTimeout(timer);
+      this.apiStatus.set(res.ok ? 'ready' : 'error');
+    } catch {
+      clearTimeout(timer);
+      this.apiStatus.set('error');
+    }
+  }
 
   selectMode(newMode: 'upload' | 'realtime' | 'selection') {
     if (newMode === 'selection' || newMode !== this.mode()) {
