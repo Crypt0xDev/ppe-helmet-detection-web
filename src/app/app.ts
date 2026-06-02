@@ -47,7 +47,7 @@ export class App implements OnInit, OnDestroy {
   private intervalId: number | null = null;
   private busy = false;
 
-  private readonly detectUrl = `${environment.apiUrl}/detect/`;
+  private readonly detectUrl = `${environment.apiUrl}/api/v1/detect/`;
   isCameraOn = signal(false);
   isDetecting = signal(false);
   status = signal<DetectionStatus | null>(null);
@@ -139,7 +139,7 @@ export class App implements OnInit, OnDestroy {
 
       const formData2 = new FormData();
       formData2.append('file', currentImagen);
-      const resImage = await fetch(`${environment.apiUrl}/detect/image`, { method: 'POST', body: formData2 });
+      const resImage = await fetch(`${environment.apiUrl}/api/v1/detect/image`, { method: 'POST', body: formData2 });
 
       if (resImage.ok) {
         const blob = await resImage.blob();
@@ -220,7 +220,7 @@ export class App implements OnInit, OnDestroy {
 
   private async sendWhatsAppAlert(message: string): Promise<void> {
     try {
-      const res = await fetch(`${environment.apiUrl}/alert/whatsapp`, {
+      const res = await fetch(`${environment.apiUrl}/api/v1/alert/whatsapp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message })
